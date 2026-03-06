@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TG Log">
+<title>Timegrapher Log</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #08080a;
+    --bg-secondary: #111114;
+    --bg-card: #16161a;
+    --bg-card-hover: #1c1c21;
+    --bg-input: #111114;
+    --border: #2a2a30;
+    --border-light: #3a3a42;
+    --gold: #c9a84c;
+    --gold-dim: #9a7b3a;
+    --gold-glow: rgba(201, 168, 76, 0.12);
+    --text-primary: #e8e6e1;
+    --text-secondary: #8a8990;
+    --text-muted: #5a5960;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* LOCK SCREEN */
+  .lock-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 24px;
+    text-align: center;
+  }
+  .lock-screen.hidden { display: none; }
+
+  .lock-icon {
+    width: 52px; height: 52px;
+    border: 2px solid var(--gold-dim);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px; font-size: 22px;
+  }
+
+  .lock-screen h1 {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 600;
+    color: var(--gold); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+
+  .lock-screen .lock-subtitle {
+    font-size: 13px; color: var(--text-muted); margin-bottom: 36px;
+  }
+
+  .pin-label {
+    font-size: 11px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;
+  }
+
+  .pin-input {
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 20px;
+    font-size: 24px; font-family: var(--font-mono);
+    color: var(--text-primary); text-align: center;
+    letter-spacing: 8px; width: 200px;
+    -webkit-appearance: none; margin-bottom: 8px;
+  }
+  .pin-input:focus { outline: none; border-color: var(--gold-dim); }
+
+  .pin-error { font-size: 13px; color: var(--red); height: 20px; margin-bottom: 16px; }
+
+  .pin-btn {
+    width: 200px; padding: 14px;
+    background: var(--gold); color: #0a0a0a; border: none;
+    border-radius: 12px; font-size: 14px; font-weight: 700;
+    font-family: var(--font-body); letter-spacing: 1px;
+    text-transform: uppercase; cursor: pointer;
+  }
+  .pin-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+  .pin-hint {
+    font-size: 11px; color: var(--text-muted);
+    margin-top: 16px; max-width: 260px; line-height: 1.5;
+  }
+
+  /* MAIN APP */
+  .main-app { display: none; padding-bottom: 60px; }
+  .main-app.active { display: block; }
+
+  .header {
+    padding: 52px 24px 28px; text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #0e0e12 0%, var(--bg-primary) 100%);
+    position: relative;
+  }
+
+  .header h1 {
+    font-family: var(--font-display);
+    font-size: 30px; font-weight: 600; letter-spacing: 2px;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 3px;
+  }
+
+  .header .tagline {
+    font-size: 11px; color: var(--text-muted);
+    letter-spacing: 3px; text-transform: uppercase;
+  }
+
+  .header-actions {
+    position: absolute; top: 52px; right: 16px;
+    display: flex; gap: 8px;
+  }
+
+  .header-btn {
+    background: none; border: none; color: var(--text-muted);
+    font-size: 18px; cursor: pointer; padding: 4px 6px;
+  }
+
+  .section { padding: 24px 20px; }
+
+  .section-title {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 16px;
+  }
+
+  /* WATCH GRID */
+  .watch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+  .watch-tile {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 12px; cursor: pointer;
+    transition: all 0.2s ease; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .watch-tile::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: transparent; transition: background 0.2s ease;
+  }
+  .watch-tile:active { transform: scale(0.97); }
+  .watch-tile.selected {
+    border-color: var(--gold-dim);
+    background: linear-gradient(180deg, rgba(201,168,76,0.08) 0%, var(--bg-card) 100%);
+  }
+  .watch-tile.selected::before {
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .watch-tile .watch-name {
+    font-family: var(--font-display); font-size: 15px;
+    font-weight: 600; color: var(--text-primary); line-height: 1.3;
+  }
+  .watch-tile.selected .watch-name { color: var(--gold); }
+  .watch-tile .watch-count { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  /* FORM */
+  .form-section { padding: 24px 20px; border-top: 1px solid var(--border); }
+  .input-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+
+  .input-group label {
+    display: block; font-size: 11px; font-weight: 500;
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 1.5px; margin-bottom: 6px;
+  }
+
+  .input-group input {
+    width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; font-size: 18px;
+    font-family: var(--font-mono); font-weight: 500;
+    color: var(--text-primary); text-align: center;
+    -webkit-appearance: none;
+  }
+  .input-group input:focus { outline: none; border-color: var(--gold-dim); }
+  .input-group input::placeholder { color: var(--text-muted); font-size: 13px; font-family: var(--font-body); }
+  .input-group .unit { font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 4px; letter-spacing: 1px; }
+
+  .record-btn {
+    width: 100%; padding: 16px; background: var(--gold); color: #0a0a0a;
+    border: none; border-radius: 12px; font-size: 14px; font-weight: 700;
+    font-family: var(--font-body); letter-spacing: 1px;
+    text-transform: uppercase; cursor: pointer;
+  }
+  .record-btn:active { transform: scale(0.97); opacity: 0.85; }
+  .record-btn:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+
+  /* LOG TABLE */
+  .log-section { padding: 24px 20px; border-top: 1px solid var(--border); }
+  .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .log-filter { display: flex; align-items: center; gap: 8px; }
+  .filter-label { font-size: 11px; color: var(--gold-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+
+  .clear-filter {
+    font-size: 11px; color: var(--text-muted); background: none; border: none;
+    cursor: pointer; font-family: var(--font-body);
+    text-decoration: underline; text-underline-offset: 2px;
+  }
+
+  .log-table-wrap { overflow-x: auto; margin: 0 -20px; padding: 0 20px; }
+
+  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 420px; }
+  .log-table th {
+    text-align: left; font-size: 10px; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 1.5px; padding: 8px 6px; border-bottom: 1px solid var(--border);
+  }
+  .log-table td { padding: 11px 6px; border-bottom: 1px solid #1a1a1e; color: var(--text-secondary); }
+  .log-table tr:last-child td { border-bottom: none; }
+  .log-table .watch-cell { color: var(--text-primary); font-weight: 500; cursor: pointer; white-space: nowrap; }
+  .log-table .watch-cell:active { color: var(--gold); }
+  .log-table .rate-val { font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
+  .rate-good { color: var(--green); }
+  .rate-ok { color: var(--yellow); }
+  .rate-bad { color: var(--red); }
+  .amp-val, .be-val { font-family: var(--font-mono); font-size: 13px; }
+  .log-table .date-cell { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+  .delete-btn { background: none; border: none; color: var(--text-muted); font-size: 14px; cursor: pointer; padding: 4px; opacity: 0.4; }
+  .delete-btn:active { opacity: 1; color: var(--red); }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px; }
+
+  /* DATA ACTIONS */
+  .data-actions { padding: 16px 20px; display: flex; gap: 10px; border-top: 1px solid var(--border); }
+  .action-btn {
+    flex: 1; background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-secondary); padding: 12px; border-radius: 10px;
+    font-size: 13px; font-weight: 500; font-family: var(--font-body); cursor: pointer;
+  }
+  .action-btn:active { transform: scale(0.97); }
+  .hidden-input { display: none; }
+
+  /* SETUP SCREEN */
+  .setup-screen { display: none; min-height: 100vh; padding: 60px 24px 40px; }
+  .setup-screen.active { display: block; }
+  .setup-screen h2 { font-family: var(--font-display); font-size: 26px; font-weight: 600; color: var(--gold); margin-bottom: 8px; }
+  .setup-screen .setup-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
+  .setup-watch-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .setup-watch-row { display: flex; gap: 10px; align-items: center; }
+  .setup-watch-row input {
+    flex: 1; background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px; font-size: 15px;
+    font-family: var(--font-body); color: var(--text-primary); -webkit-appearance: none;
+  }
+  .setup-watch-row input:focus { outline: none; border-color: var(--gold-dim); }
+  .setup-watch-row input::placeholder { color: var(--text-muted); }
+  .setup-watch-row .row-num { font-size: 12px; color: var(--text-muted); min-width: 20px; text-align: right; }
+  .setup-watch-row .remove-row-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 4px 8px; opacity: 0.5; }
+  .setup-btns { display: flex; flex-direction: column; gap: 10px; }
+  .add-watch-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); padding: 12px; border-radius: 10px; font-size: 14px; font-family: var(--font-body); cursor: pointer; width: 100%; }
+  .save-setup-btn { width: 100%; padding: 16px; background: var(--gold); color: #0a0a0a; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; font-family: var(--font-body); letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
+  .back-setup-btn { width: 100%; padding: 14px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); border-radius: 12px; font-size: 14px; font-family: var(--font-body); cursor: pointer; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; top:0;left:0;right:0;bottom:0; background: rgba(0,0,0,0.75); z-index: 200; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 320px; width: 90%; text-align: center; }
+  .modal h3 { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+  .modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+  .modal-buttons { display: flex; gap: 10px; }
+  .modal-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; font-family: var(--font-body); cursor: pointer; }
+  .modal-btn.cancel { background: var(--border); color: var(--text-secondary); }
+  .modal-btn.confirm { background: var(--gold); color: #0a0a0a; }
+  .modal-btn.danger { background: var(--red); color: #fff; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 40px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-primary); padding: 12px 24px;
+    border-radius: 12px; font-size: 14px;
+    transition: transform 0.3s ease; z-index: 100;
+    max-width: 320px; text-align: center;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  .section, .form-section, .log-section { animation: fadeIn 0.4s ease both; }
+</style>
+</head>
+<body>
+
+<!-- LOCK SCREEN -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-icon">&#128274;</div>
+  <h1>Timegrapher</h1>
+  <p class="lock-subtitle">Movement Performance Log</p>
+  <div id="pinCreateSection" style="display:none">
+    <p class="pin-label">Create your PIN</p>
+    <input type="password" inputmode="numeric" class="pin-input" id="pinCreate" maxlength="6" placeholder="••••">
+    <div class="pin-error" id="pinCreateError"></div>
+    <p class="pin-label">Confirm PIN</p>
+    <input type="password" inputmode="numeric" class="pin-input" id="pinConfirm" maxlength="6" placeholder="••••">
+    <div class="pin-error" id="pinConfirmError"></div>
+    <button class="pin-btn" onclick="createPin()">Set PIN &amp; Continue</button>
+    <p class="pin-hint">4–6 digits. This PIN encrypts your data locally. There is no recovery — remember it.</p>
+  </div>
+  <div id="pinUnlockSection" style="display:none">
+    <p class="pin-label">Enter PIN</p>
+    <input type="password" inputmode="numeric" class="pin-input" id="pinUnlock" maxlength="6" placeholder="••••">
+    <div class="pin-error" id="pinUnlockError"></div>
+    <button class="pin-btn" onclick="unlockApp()">Unlock</button>
+  </div>
+</div>
+
+<!-- SETUP SCREEN -->
+<div class="setup-screen" id="setupScreen">
+  <h2>Watch Collection</h2>
+  <p class="setup-desc">Add your watches below. Names are encrypted and stored locally on your device only.</p>
+  <div class="setup-watch-list" id="setupWatchList"></div>
+  <div class="setup-btns">
+    <button class="add-watch-btn" onclick="addSetupRow()">+ Add watch</button>
+    <button class="save-setup-btn" onclick="saveSetup()">Save &amp; Continue</button>
+    <button class="back-setup-btn" id="backSetupBtn" onclick="cancelSetup()" style="display:none">Cancel</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="main-app" id="mainApp">
+  <div class="header">
+    <h1>Timegrapher</h1>
+    <p class="tagline">Movement Performance Log</p>
+    <div class="header-actions">
+      <button class="header-btn" onclick="openSetup()" title="Edit watches">&#9881;</button>
+      <button class="header-btn" onclick="lockApp()" title="Lock">&#128274;</button>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">Select Watch</div>
+    <div class="watch-grid" id="watchGrid"></div>
+  </div>
+  <div class="form-section">
+    <div class="section-title">Record Reading</div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>Rate</label>
+        <input type="number" id="rateInput" placeholder="±0" step="0.1">
+        <div class="unit">s/d</div>
+      </div>
+      <div class="input-group">
+        <label>Amplitude</label>
+        <input type="number" id="ampInput" placeholder="0" step="1">
+        <div class="unit">degrees</div>
+      </div>
+      <div class="input-group">
+        <label>Beat Error</label>
+        <input type="number" id="beInput" placeholder="0.0" step="0.1">
+        <div class="unit">ms</div>
+      </div>
+    </div>
+    <button class="record-btn" id="recordBtn" onclick="recordReading()" disabled>Select a watch first</button>
+  </div>
+  <div class="log-section">
+    <div class="log-header">
+      <div class="section-title" style="margin-bottom:0">Reading Log</div>
+      <div class="log-filter" id="logFilter" style="display:none">
+        <span class="filter-label" id="filterLabel"></span>
+        <button class="clear-filter" onclick="clearFilter()">Clear</button>
+      </div>
+    </div>
+    <div class="log-table-wrap"><div id="logTableContainer"></div></div>
+  </div>
+  <div class="data-actions">
+    <button class="action-btn" onclick="exportCSV()">Export CSV</button>
+    <button class="action-btn" onclick="document.getElementById('csvFileInput').click()">Import CSV</button>
+  </div>
+  <input type="file" id="csvFileInput" class="hidden-input" accept=".csv" onchange="handleImportFile(event)">
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal"><h3>Import CSV</h3><p id="importModalText"></p>
+    <div class="modal-buttons">
+      <button class="modal-btn cancel" onclick="cancelImport()">Cancel</button>
+      <button class="modal-btn confirm" onclick="confirmImport()">Import</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal"><h3>Delete Reading</h3><p>Remove this entry? This can't be undone.</p>
+    <div class="modal-buttons">
+      <button class="modal-btn cancel" onclick="cancelDelete()">Cancel</button>
+      <button class="modal-btn danger" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// =========================================================
+// ENCRYPTION (AES-GCM via Web Crypto API)
+// =========================================================
+const SALT_KEY = 'tg_salt', CHECK_KEY = 'tg_check', DATA_KEY = 'tg_vault';
+const CHECK_PHRASE = 'TIMEGRAPHER_OK';
+let cryptoKey = null;
+
+async function deriveCryptoKey(pin, salt) {
+  const enc = new TextEncoder();
+  const km = await crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    km, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+  );
+}
+
+async function encrypt(key, text) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(text));
+  const buf = new Uint8Array(iv.length + ct.byteLength);
+  buf.set(iv); buf.set(new Uint8Array(ct), iv.length);
+  return btoa(String.fromCharCode(...buf));
+}
+
+async function decrypt(key, b64) {
+  const buf = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, key, buf.slice(12));
+  return new TextDecoder().decode(pt);
+}
+
+function getSalt() {
+  let b = localStorage.getItem(SALT_KEY);
+  if (b) return Uint8Array.from(atob(b), c => c.charCodeAt(0));
+  const s = crypto.getRandomValues(new Uint8Array(16));
+  localStorage.setItem(SALT_KEY, btoa(String.fromCharCode(...s)));
+  return s;
+}
+
+async function loadVault() {
+  const raw = localStorage.getItem(DATA_KEY);
+  if (!raw) return { watches: [], readings: [] };
+  try { return JSON.parse(await decrypt(cryptoKey, raw)); }
+  catch { return null; }
+}
+
+async function saveVault(v) {
+  localStorage.setItem(DATA_KEY, await encrypt(cryptoKey, JSON.stringify(v)));
+}
+
+// =========================================================
+// STATE
+// =========================================================
+let vault = { watches: [], readings: [] };
+let selectedWatch = null, activeFilter = null;
+let pendingImportData = null, pendingDeleteId = null;
+
+// =========================================================
+// PIN / LOCK
+// =========================================================
+function initLockScreen() {
+  const hasCheck = localStorage.getItem(CHECK_KEY);
+  document.getElementById('pinCreateSection').style.display = hasCheck ? 'none' : 'block';
+  document.getElementById('pinUnlockSection').style.display = hasCheck ? 'block' : 'none';
+  document.getElementById('lockScreen').classList.remove('hidden');
+}
+
+async function createPin() {
+  const pin = document.getElementById('pinCreate').value;
+  const conf = document.getElementById('pinConfirm').value;
+  document.getElementById('pinCreateError').textContent = '';
+  document.getElementById('pinConfirmError').textContent = '';
+  if (pin.length < 4) { document.getElementById('pinCreateError').textContent = 'At least 4 digits'; return; }
+  if (pin !== conf) { document.getElementById('pinConfirmError').textContent = "PINs don't match"; return; }
+
+  cryptoKey = await deriveCryptoKey(pin, getSalt());
+  localStorage.setItem(CHECK_KEY, await encrypt(cryptoKey, CHECK_PHRASE));
+  vault = { watches: [], readings: [] };
+  await saveVault(vault);
+  document.getElementById('lockScreen').classList.add('hidden');
+  openSetup(true);
+}
+
+async function unlockApp() {
+  const pin = document.getElementById('pinUnlock').value;
+  document.getElementById('pinUnlockError').textContent = '';
+  if (!pin) { document.getElementById('pinUnlockError').textContent = 'Enter your PIN'; return; }
+
+  cryptoKey = await deriveCryptoKey(pin, getSalt());
+  try {
+    const d = await decrypt(cryptoKey, localStorage.getItem(CHECK_KEY));
+    if (d !== CHECK_PHRASE) throw 0;
+  } catch {
+    document.getElementById('pinUnlockError').textContent = 'Wrong PIN';
+    document.getElementById('pinUnlock').value = '';
+    cryptoKey = null; return;
+  }
+
+  vault = await loadVault();
+  if (!vault) { document.getElementById('pinUnlockError').textContent = 'Data error'; cryptoKey = null; return; }
+  document.getElementById('pinUnlock').value = '';
+  document.getElementById('lockScreen').classList.add('hidden');
+  vault.watches.length === 0 ? openSetup(true) : showMainApp();
+}
+
+function lockApp() {
+  cryptoKey = null; vault = { watches: [], readings: [] };
+  selectedWatch = null; activeFilter = null;
+  document.getElementById('mainApp').classList.remove('active');
+  document.getElementById('setupScreen').classList.remove('active');
+  initLockScreen();
+}
+
+// =========================================================
+// SETUP
+// =========================================================
+function openSetup(first) {
+  document.getElementById('mainApp').classList.remove('active');
+  document.getElementById('setupScreen').classList.add('active');
+  document.getElementById('backSetupBtn').style.display = first ? 'none' : 'block';
+  initSetupRows(vault.watches);
+}
+
+function cancelSetup() {
+  document.getElementById('setupScreen').classList.remove('active');
+  showMainApp();
+}
+
+function initSetupRows(watches) {
+  const list = document.getElementById('setupWatchList');
+  list.innerHTML = '';
+  (watches.length > 0 ? watches : ['','','']).forEach((n, i) => addSetupRowWithValue(n, i + 1));
+}
+
+function addSetupRowWithValue(val, num) {
+  const list = document.getElementById('setupWatchList');
+  const row = document.createElement('div');
+  row.className = 'setup-watch-row';
+  const c = list.children.length + (num ? 0 : 1);
+  row.innerHTML = '<span class="row-num">' + (num||c) + '</span>' +
+    '<input type="text" placeholder="e.g. Watch ' + (num||c) + '" value="' + esc(val||'') + '">' +
+    '<button class="remove-row-btn" onclick="this.parentElement.remove();renum()">&times;</button>';
+  list.appendChild(row);
+}
+
+function addSetupRow() { addSetupRowWithValue('', null); renum(); }
+function renum() { document.querySelectorAll('.setup-watch-row').forEach((r,i) => r.querySelector('.row-num').textContent = i+1); }
+
+async function saveSetup() {
+  const watches = [];
+  document.querySelectorAll('#setupWatchList input').forEach(inp => { const v = inp.value.trim(); if(v) watches.push(v); });
+  if (watches.length === 0) { showToast('Add at least one watch'); return; }
+  vault.watches = watches;
+  await saveVault(vault);
+  selectedWatch = null;
+  document.getElementById('setupScreen').classList.remove('active');
+  showMainApp();
+}
+
+// =========================================================
+// MAIN APP
+// =========================================================
+function showMainApp() {
+  document.getElementById('mainApp').classList.add('active');
+  renderGrid(); renderLog(); updateBtn();
+}
+
+function renderGrid() {
+  document.getElementById('watchGrid').innerHTML = vault.watches.map((name, i) => {
+    const c = vault.readings.filter(r => r.watch === name).length;
+    const s = selectedWatch === name ? ' selected' : '';
+    return '<div class="watch-tile'+s+'" onclick="selWatch('+i+')">' +
+      '<div class="watch-name">'+escH(name)+'</div>' +
+      '<div class="watch-count">'+c+' reading'+(c!==1?'s':'')+'</div></div>';
+  }).join('');
+}
+
+function selWatch(i) {
+  const n = vault.watches[i];
+  selectedWatch = selectedWatch === n ? null : n;
+  renderGrid(); updateBtn();
+}
+
+function updateBtn() {
+  const b = document.getElementById('recordBtn');
+  b.disabled = !selectedWatch;
+  b.textContent = selectedWatch ? 'Record Reading' : 'Select a watch first';
+}
+
+async function recordReading() {
+  if (!selectedWatch) return;
+  const r = document.getElementById('rateInput').value;
+  const a = document.getElementById('ampInput').value;
+  const b = document.getElementById('beInput').value;
+  if (r==='' && a==='' && b==='') { showToast('Enter at least one measurement'); return; }
+
+  vault.readings.push({
+    id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+    watch: selectedWatch,
+    rate: r!=='' ? parseFloat(r) : null,
+    amplitude: a!=='' ? parseFloat(a) : null,
+    beatError: b!=='' ? parseFloat(b) : null,
+    datetime: new Date().toISOString()
+  });
+  await saveVault(vault);
+  document.getElementById('rateInput').value = '';
+  document.getElementById('ampInput').value = '';
+  document.getElementById('beInput').value = '';
+  showToast('Recorded for ' + selectedWatch);
+  renderGrid(); renderLog();
+}
+
+// =========================================================
+// LOG
+// =========================================================
+function renderLog() {
+  const ctr = document.getElementById('logTableContainer');
+  let rd = [...vault.readings];
+  const fEl = document.getElementById('logFilter'), fLbl = document.getElementById('filterLabel');
+
+  if (activeFilter) { rd = rd.filter(r => r.watch === activeFilter); fEl.style.display='flex'; fLbl.textContent=activeFilter; }
+  else { fEl.style.display='none'; }
+
+  rd.sort((a,b) => new Date(b.datetime)-new Date(a.datetime));
+  if (rd.length===0) { ctr.innerHTML='<div class="empty-state">'+(activeFilter?'No readings for this watch yet.':'No readings recorded yet.')+'</div>'; return; }
+
+  let h = '<table class="log-table"><thead><tr><th>Watch</th><th>Rate</th><th>Amp</th><th>BE</th><th>Date</th><th></th></tr></thead><tbody>';
+  rd.forEach(r => {
+    const rc=rateClass(r.rate);
+    const rs=r.rate!==null?(r.rate>0?'+':'')+r.rate.toFixed(1):'—';
+    const as=r.amplitude!==null?r.amplitude.toFixed(0)+'°':'—';
+    const bs=r.beatError!==null?r.beatError.toFixed(1):'—';
+    h+='<tr><td class="watch-cell" onclick="filterBy(\''+esc(r.watch)+'\')">'+escH(r.watch)+'</td>'+
+      '<td class="rate-val '+rc+'">'+rs+'</td><td class="amp-val">'+as+'</td><td class="be-val">'+bs+'</td>'+
+      '<td class="date-cell">'+fmtDate(r.datetime)+'</td>'+
+      '<td><button class="delete-btn" onclick="promptDel(\''+r.id+'\')">&times;</button></td></tr>';
+  });
+  ctr.innerHTML = h+'</tbody></table>';
+}
+
+function rateClass(r) { if(r===null)return''; const a=Math.abs(r); return a<=5?'rate-good':a<=15?'rate-ok':'rate-bad'; }
+function fmtDate(iso) { const d=new Date(iso); const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return m[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear(); }
+function filterBy(n) { activeFilter=n; renderLog(); }
+function clearFilter() { activeFilter=null; renderLog(); }
+
+// =========================================================
+// DELETE
+// =========================================================
+function promptDel(id) { pendingDeleteId=id; document.getElementById('deleteModal').classList.add('show'); }
+async function confirmDelete() {
+  if(!pendingDeleteId)return;
+  vault.readings=vault.readings.filter(r=>r.id!==pendingDeleteId);
+  await saveVault(vault); pendingDeleteId=null;
+  document.getElementById('deleteModal').classList.remove('show');
+  renderGrid(); renderLog(); showToast('Deleted');
+}
+function cancelDelete() { pendingDeleteId=null; document.getElementById('deleteModal').classList.remove('show'); }
+
+// =========================================================
+// EXPORT CSV
+// =========================================================
+function exportCSV() {
+  if(vault.readings.length===0){showToast('No data');return;}
+  const s=[...vault.readings].sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
+  let csv='watch,rate_spd,amplitude_deg,beat_error_ms,datetime\n';
+  s.forEach(r=>{csv+='"'+r.watch+'",'+(r.rate!==null?r.rate:'')+','+(r.amplitude!==null?r.amplitude:'')+','+(r.beatError!==null?r.beatError:'')+','+r.datetime+'\n';});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='timegrapher_log.csv'; a.click();
+  showToast('CSV exported');
+}
+
+// =========================================================
+// IMPORT CSV
+// =========================================================
+function handleImportFile(ev) {
+  const f=ev.target.files[0]; if(!f)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const lines=e.target.result.trim().split('\n').slice(1);
+    let parsed=[],err=0;
+    lines.forEach(line=>{
+      const m=line.match(/^"?([^"]*)"?,([^,]*),([^,]*),([^,]*),(.+)$/);
+      if(m){const w=m[1].trim();if(w){parsed.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6)+parsed.length,watch:w,rate:m[2].trim()!==''?parseFloat(m[2]):null,amplitude:m[3].trim()!==''?parseFloat(m[3]):null,beatError:m[4].trim()!==''?parseFloat(m[4]):null,datetime:m[5].trim()||new Date().toISOString()});}else err++;}else err++;
+    });
+    if(parsed.length===0){showToast('No valid entries');ev.target.value='';return;}
+    pendingImportData=parsed;
+    const nw=[...new Set(parsed.map(r=>r.watch))].filter(w=>!vault.watches.includes(w));
+    let msg='Found '+parsed.length+' readings.';
+    if(err>0)msg+=' ('+err+' rows skipped.)';
+    msg+=' Will merge with existing data.';
+    if(nw.length>0)msg+=' New watches: '+nw.join(', ');
+    document.getElementById('importModalText').textContent=msg;
+    document.getElementById('importModal').classList.add('show');
+  };
+  reader.readAsText(f);
+}
+
+async function confirmImport() {
+  if(!pendingImportData)return;
+  pendingImportData.forEach(r=>vault.readings.push(r));
+  [...new Set(pendingImportData.map(r=>r.watch))].filter(w=>!vault.watches.includes(w)).forEach(n=>vault.watches.push(n));
+  await saveVault(vault);
+  const c=pendingImportData.length; pendingImportData=null;
+  document.getElementById('importModal').classList.remove('show');
+  document.getElementById('csvFileInput').value='';
+  showToast('Imported '+c+' readings');
+  renderGrid(); renderLog();
+}
+
+function cancelImport() { pendingImportData=null; document.getElementById('importModal').classList.remove('show'); document.getElementById('csvFileInput').value=''; }
+
+// =========================================================
+// UTILS
+// =========================================================
+function escH(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'){
+    if(document.activeElement.id==='pinUnlock')unlockApp();
+    if(document.activeElement.id==='pinConfirm')createPin();
+  }
+});
+
+// INIT
+initLockScreen();
+</script>
+</body>
+</html>
