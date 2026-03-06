@@ -13,13 +13,11 @@
     --bg-primary: #08080a;
     --bg-secondary: #111114;
     --bg-card: #16161a;
-    --bg-card-hover: #1c1c21;
     --bg-input: #111114;
     --border: #2a2a30;
     --border-light: #3a3a42;
     --gold: #c9a84c;
     --gold-dim: #9a7b3a;
-    --gold-glow: rgba(201, 168, 76, 0.12);
     --text-primary: #e8e6e1;
     --text-secondary: #8a8990;
     --text-muted: #5a5960;
@@ -39,76 +37,13 @@
     color: var(--text-primary);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
+    padding-bottom: 60px;
   }
 
-  /* LOCK SCREEN */
-  .lock-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 40px 24px;
-    text-align: center;
-  }
-  .lock-screen.hidden { display: none; }
-
-  .lock-icon {
-    width: 52px; height: 52px;
-    border: 2px solid var(--gold-dim);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 24px; font-size: 22px;
-  }
-
-  .lock-screen h1 {
-    font-family: var(--font-display);
-    font-size: 28px; font-weight: 600;
-    color: var(--gold); letter-spacing: 2px;
-    text-transform: uppercase; margin-bottom: 6px;
-  }
-
-  .lock-screen .lock-subtitle {
-    font-size: 13px; color: var(--text-muted); margin-bottom: 36px;
-  }
-
-  .pin-label {
-    font-size: 11px; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;
-  }
-
-  .pin-input {
-    background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: 12px; padding: 14px 20px;
-    font-size: 24px; font-family: var(--font-mono);
-    color: var(--text-primary); text-align: center;
-    letter-spacing: 8px; width: 200px;
-    -webkit-appearance: none; margin-bottom: 8px;
-  }
-  .pin-input:focus { outline: none; border-color: var(--gold-dim); }
-
-  .pin-error { font-size: 13px; color: var(--red); height: 20px; margin-bottom: 16px; }
-
-  .pin-btn {
-    width: 200px; padding: 14px;
-    background: var(--gold); color: #0a0a0a; border: none;
-    border-radius: 12px; font-size: 14px; font-weight: 700;
-    font-family: var(--font-body); letter-spacing: 1px;
-    text-transform: uppercase; cursor: pointer;
-  }
-  .pin-btn:active { transform: scale(0.97); opacity: 0.85; }
-
-  .pin-hint {
-    font-size: 11px; color: var(--text-muted);
-    margin-top: 16px; max-width: 260px; line-height: 1.5;
-  }
-
-  /* MAIN APP */
-  .main-app { display: none; padding-bottom: 60px; }
-  .main-app.active { display: block; }
-
+  /* HEADER */
   .header {
-    padding: 52px 24px 28px; text-align: center;
+    padding: 52px 24px 24px;
+    text-align: center;
     border-bottom: 1px solid var(--border);
     background: linear-gradient(180deg, #0e0e12 0%, var(--bg-primary) 100%);
     position: relative;
@@ -125,31 +60,30 @@
     letter-spacing: 3px; text-transform: uppercase;
   }
 
-  .header-actions {
-    position: absolute; top: 52px; right: 16px;
-    display: flex; gap: 8px;
+  .settings-btn {
+    position: absolute; top: 54px; right: 18px;
+    background: none; border: none;
+    color: var(--text-muted); opacity: 0.4;
+    font-size: 20px; cursor: pointer; padding: 4px 6px;
+    transition: opacity 0.2s;
   }
+  .settings-btn:active { opacity: 0.8; }
 
-  .header-btn {
-    background: none; border: none; color: var(--text-muted);
-    font-size: 18px; cursor: pointer; padding: 4px 6px;
-  }
-
-  .section { padding: 24px 20px; }
-
+  /* SECTIONS */
+  .section { padding: 20px 20px 16px; }
   .section-title {
     font-size: 11px; font-weight: 600; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 16px;
+    text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 12px;
   }
 
-  /* WATCH GRID */
-  .watch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  /* WATCH GRID — compact tiles */
+  .watch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 
   .watch-tile {
     background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 14px 12px; cursor: pointer;
-    transition: all 0.2s ease; text-align: center;
-    position: relative; overflow: hidden;
+    border-radius: 10px; padding: 10px 10px;
+    cursor: pointer; transition: all 0.2s ease;
+    text-align: center; position: relative; overflow: hidden;
   }
   .watch-tile::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0;
@@ -164,28 +98,28 @@
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
   }
   .watch-tile .watch-name {
-    font-family: var(--font-display); font-size: 15px;
-    font-weight: 600; color: var(--text-primary); line-height: 1.3;
+    font-family: var(--font-display); font-size: 14px;
+    font-weight: 600; color: var(--text-primary); line-height: 1.2;
   }
   .watch-tile.selected .watch-name { color: var(--gold); }
-  .watch-tile .watch-count { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  .watch-tile .watch-count {
+    font-size: 10px; color: var(--text-muted); margin-top: 2px;
+  }
 
   /* FORM */
-  .form-section { padding: 24px 20px; border-top: 1px solid var(--border); }
-  .input-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .form-section { padding: 20px 20px; border-top: 1px solid var(--border); }
+  .input-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
 
   .input-group label {
     display: block; font-size: 11px; font-weight: 500;
     color: var(--text-muted); text-transform: uppercase;
     letter-spacing: 1.5px; margin-bottom: 6px;
   }
-
   .input-group input {
     width: 100%; background: var(--bg-input); border: 1px solid var(--border);
     border-radius: 8px; padding: 12px; font-size: 18px;
     font-family: var(--font-mono); font-weight: 500;
-    color: var(--text-primary); text-align: center;
-    -webkit-appearance: none;
+    color: var(--text-primary); text-align: center; -webkit-appearance: none;
   }
   .input-group input:focus { outline: none; border-color: var(--gold-dim); }
   .input-group input::placeholder { color: var(--text-muted); font-size: 13px; font-family: var(--font-body); }
@@ -201,11 +135,10 @@
   .record-btn:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
 
   /* LOG TABLE */
-  .log-section { padding: 24px 20px; border-top: 1px solid var(--border); }
-  .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .log-section { padding: 20px 20px; border-top: 1px solid var(--border); }
+  .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .log-filter { display: flex; align-items: center; gap: 8px; }
   .filter-label { font-size: 11px; color: var(--gold-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
-
   .clear-filter {
     font-size: 11px; color: var(--text-muted); background: none; border: none;
     cursor: pointer; font-family: var(--font-body);
@@ -213,7 +146,6 @@
   }
 
   .log-table-wrap { overflow-x: auto; margin: 0 -20px; padding: 0 20px; }
-
   .log-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 420px; }
   .log-table th {
     text-align: left; font-size: 10px; font-weight: 600;
@@ -224,15 +156,15 @@
   .log-table tr:last-child td { border-bottom: none; }
   .log-table .watch-cell { color: var(--text-primary); font-weight: 500; cursor: pointer; white-space: nowrap; }
   .log-table .watch-cell:active { color: var(--gold); }
-  .log-table .rate-val { font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
+  .rate-val { font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
   .rate-good { color: var(--green); }
   .rate-ok { color: var(--yellow); }
   .rate-bad { color: var(--red); }
   .amp-val, .be-val { font-family: var(--font-mono); font-size: 13px; }
   .log-table .date-cell { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
-  .delete-btn { background: none; border: none; color: var(--text-muted); font-size: 14px; cursor: pointer; padding: 4px; opacity: 0.4; }
+  .delete-btn { background: none; border: none; color: var(--text-muted); font-size: 14px; cursor: pointer; padding: 4px; opacity: 0.35; }
   .delete-btn:active { opacity: 1; color: var(--red); }
-  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px; }
+  .empty-state { text-align: center; padding: 36px 20px; color: var(--text-muted); font-size: 14px; }
 
   /* DATA ACTIONS */
   .data-actions { padding: 16px 20px; display: flex; gap: 10px; border-top: 1px solid var(--border); }
@@ -247,8 +179,16 @@
   /* SETUP SCREEN */
   .setup-screen { display: none; min-height: 100vh; padding: 60px 24px 40px; }
   .setup-screen.active { display: block; }
-  .setup-screen h2 { font-family: var(--font-display); font-size: 26px; font-weight: 600; color: var(--gold); margin-bottom: 8px; }
-  .setup-screen .setup-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
+  .main-app { display: none; }
+  .main-app.active { display: block; }
+
+  .setup-screen h2 {
+    font-family: var(--font-display); font-size: 26px;
+    font-weight: 600; color: var(--gold); margin-bottom: 8px;
+  }
+  .setup-screen .setup-desc {
+    font-size: 14px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6;
+  }
   .setup-watch-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
   .setup-watch-row { display: flex; gap: 10px; align-items: center; }
   .setup-watch-row input {
@@ -295,33 +235,10 @@
 </head>
 <body>
 
-<!-- LOCK SCREEN -->
-<div class="lock-screen" id="lockScreen">
-  <div class="lock-icon">&#128274;</div>
-  <h1>Timegrapher</h1>
-  <p class="lock-subtitle">Movement Performance Log</p>
-  <div id="pinCreateSection" style="display:none">
-    <p class="pin-label">Create your PIN</p>
-    <input type="password" inputmode="numeric" class="pin-input" id="pinCreate" maxlength="6" placeholder="••••">
-    <div class="pin-error" id="pinCreateError"></div>
-    <p class="pin-label">Confirm PIN</p>
-    <input type="password" inputmode="numeric" class="pin-input" id="pinConfirm" maxlength="6" placeholder="••••">
-    <div class="pin-error" id="pinConfirmError"></div>
-    <button class="pin-btn" onclick="createPin()">Set PIN &amp; Continue</button>
-    <p class="pin-hint">4–6 digits. This PIN encrypts your data locally. There is no recovery — remember it.</p>
-  </div>
-  <div id="pinUnlockSection" style="display:none">
-    <p class="pin-label">Enter PIN</p>
-    <input type="password" inputmode="numeric" class="pin-input" id="pinUnlock" maxlength="6" placeholder="••••">
-    <div class="pin-error" id="pinUnlockError"></div>
-    <button class="pin-btn" onclick="unlockApp()">Unlock</button>
-  </div>
-</div>
-
 <!-- SETUP SCREEN -->
 <div class="setup-screen" id="setupScreen">
   <h2>Watch Collection</h2>
-  <p class="setup-desc">Add your watches below. Names are encrypted and stored locally on your device only.</p>
+  <p class="setup-desc">Add your watches below. Names are stored locally on your device only — they never appear in the source code.</p>
   <div class="setup-watch-list" id="setupWatchList"></div>
   <div class="setup-btns">
     <button class="add-watch-btn" onclick="addSetupRow()">+ Add watch</button>
@@ -335,15 +252,14 @@
   <div class="header">
     <h1>Timegrapher</h1>
     <p class="tagline">Movement Performance Log</p>
-    <div class="header-actions">
-      <button class="header-btn" onclick="openSetup()" title="Edit watches">&#9881;</button>
-      <button class="header-btn" onclick="lockApp()" title="Lock">&#128274;</button>
-    </div>
+    <button class="settings-btn" onclick="openSetup()" title="Edit watches">&#9881;</button>
   </div>
+
   <div class="section">
     <div class="section-title">Select Watch</div>
     <div class="watch-grid" id="watchGrid"></div>
   </div>
+
   <div class="form-section">
     <div class="section-title">Record Reading</div>
     <div class="input-row">
@@ -365,6 +281,7 @@
     </div>
     <button class="record-btn" id="recordBtn" onclick="recordReading()" disabled>Select a watch first</button>
   </div>
+
   <div class="log-section">
     <div class="log-header">
       <div class="section-title" style="margin-bottom:0">Reading Log</div>
@@ -375,6 +292,7 @@
     </div>
     <div class="log-table-wrap"><div id="logTableContainer"></div></div>
   </div>
+
   <div class="data-actions">
     <button class="action-btn" onclick="exportCSV()">Export CSV</button>
     <button class="action-btn" onclick="document.getElementById('csvFileInput').click()">Import CSV</button>
@@ -403,125 +321,30 @@
 
 <script>
 // =========================================================
-// ENCRYPTION (AES-GCM via Web Crypto API)
+// DATA LAYER (plain localStorage)
 // =========================================================
-const SALT_KEY = 'tg_salt', CHECK_KEY = 'tg_check', DATA_KEY = 'tg_vault';
-const CHECK_PHRASE = 'TIMEGRAPHER_OK';
-let cryptoKey = null;
-
-async function deriveCryptoKey(pin, salt) {
-  const enc = new TextEncoder();
-  const km = await crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveKey']);
-  return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
-    km, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
-  );
-}
-
-async function encrypt(key, text) {
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(text));
-  const buf = new Uint8Array(iv.length + ct.byteLength);
-  buf.set(iv); buf.set(new Uint8Array(ct), iv.length);
-  return btoa(String.fromCharCode(...buf));
-}
-
-async function decrypt(key, b64) {
-  const buf = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, key, buf.slice(12));
-  return new TextDecoder().decode(pt);
-}
-
-function getSalt() {
-  let b = localStorage.getItem(SALT_KEY);
-  if (b) return Uint8Array.from(atob(b), c => c.charCodeAt(0));
-  const s = crypto.getRandomValues(new Uint8Array(16));
-  localStorage.setItem(SALT_KEY, btoa(String.fromCharCode(...s)));
-  return s;
-}
-
-async function loadVault() {
-  const raw = localStorage.getItem(DATA_KEY);
-  if (!raw) return { watches: [], readings: [] };
-  try { return JSON.parse(await decrypt(cryptoKey, raw)); }
-  catch { return null; }
-}
-
-async function saveVault(v) {
-  localStorage.setItem(DATA_KEY, await encrypt(cryptoKey, JSON.stringify(v)));
-}
+function getWatches() { try { return JSON.parse(localStorage.getItem('tg_watches'))||[]; } catch { return []; } }
+function saveWatches(w) { localStorage.setItem('tg_watches', JSON.stringify(w)); }
+function getReadings() { try { return JSON.parse(localStorage.getItem('tg_readings'))||[]; } catch { return []; } }
+function saveReadings(r) { localStorage.setItem('tg_readings', JSON.stringify(r)); }
 
 // =========================================================
 // STATE
 // =========================================================
-let vault = { watches: [], readings: [] };
 let selectedWatch = null, activeFilter = null;
 let pendingImportData = null, pendingDeleteId = null;
+// Snapshot of watch names before editing, used to detect renames
+let watchesBeforeEdit = [];
 
 // =========================================================
-// PIN / LOCK
+// SETUP SCREEN
 // =========================================================
-function initLockScreen() {
-  const hasCheck = localStorage.getItem(CHECK_KEY);
-  document.getElementById('pinCreateSection').style.display = hasCheck ? 'none' : 'block';
-  document.getElementById('pinUnlockSection').style.display = hasCheck ? 'block' : 'none';
-  document.getElementById('lockScreen').classList.remove('hidden');
-}
-
-async function createPin() {
-  const pin = document.getElementById('pinCreate').value;
-  const conf = document.getElementById('pinConfirm').value;
-  document.getElementById('pinCreateError').textContent = '';
-  document.getElementById('pinConfirmError').textContent = '';
-  if (pin.length < 4) { document.getElementById('pinCreateError').textContent = 'At least 4 digits'; return; }
-  if (pin !== conf) { document.getElementById('pinConfirmError').textContent = "PINs don't match"; return; }
-
-  cryptoKey = await deriveCryptoKey(pin, getSalt());
-  localStorage.setItem(CHECK_KEY, await encrypt(cryptoKey, CHECK_PHRASE));
-  vault = { watches: [], readings: [] };
-  await saveVault(vault);
-  document.getElementById('lockScreen').classList.add('hidden');
-  openSetup(true);
-}
-
-async function unlockApp() {
-  const pin = document.getElementById('pinUnlock').value;
-  document.getElementById('pinUnlockError').textContent = '';
-  if (!pin) { document.getElementById('pinUnlockError').textContent = 'Enter your PIN'; return; }
-
-  cryptoKey = await deriveCryptoKey(pin, getSalt());
-  try {
-    const d = await decrypt(cryptoKey, localStorage.getItem(CHECK_KEY));
-    if (d !== CHECK_PHRASE) throw 0;
-  } catch {
-    document.getElementById('pinUnlockError').textContent = 'Wrong PIN';
-    document.getElementById('pinUnlock').value = '';
-    cryptoKey = null; return;
-  }
-
-  vault = await loadVault();
-  if (!vault) { document.getElementById('pinUnlockError').textContent = 'Data error'; cryptoKey = null; return; }
-  document.getElementById('pinUnlock').value = '';
-  document.getElementById('lockScreen').classList.add('hidden');
-  vault.watches.length === 0 ? openSetup(true) : showMainApp();
-}
-
-function lockApp() {
-  cryptoKey = null; vault = { watches: [], readings: [] };
-  selectedWatch = null; activeFilter = null;
-  document.getElementById('mainApp').classList.remove('active');
-  document.getElementById('setupScreen').classList.remove('active');
-  initLockScreen();
-}
-
-// =========================================================
-// SETUP
-// =========================================================
-function openSetup(first) {
+function openSetup(firstTime) {
+  watchesBeforeEdit = [...getWatches()];
   document.getElementById('mainApp').classList.remove('active');
   document.getElementById('setupScreen').classList.add('active');
-  document.getElementById('backSetupBtn').style.display = first ? 'none' : 'block';
-  initSetupRows(vault.watches);
+  document.getElementById('backSetupBtn').style.display = firstTime ? 'none' : 'block';
+  initSetupRows(getWatches());
 }
 
 function cancelSetup() {
@@ -549,13 +372,29 @@ function addSetupRowWithValue(val, num) {
 function addSetupRow() { addSetupRowWithValue('', null); renum(); }
 function renum() { document.querySelectorAll('.setup-watch-row').forEach((r,i) => r.querySelector('.row-num').textContent = i+1); }
 
-async function saveSetup() {
-  const watches = [];
-  document.querySelectorAll('#setupWatchList input').forEach(inp => { const v = inp.value.trim(); if(v) watches.push(v); });
-  if (watches.length === 0) { showToast('Add at least one watch'); return; }
-  vault.watches = watches;
-  await saveVault(vault);
+function saveSetup() {
+  const inputs = document.querySelectorAll('#setupWatchList input');
+  const newWatches = [];
+  inputs.forEach(inp => { const v = inp.value.trim(); if(v) newWatches.push(v); });
+  if (newWatches.length === 0) { showToast('Add at least one watch'); return; }
+
+  // Detect renames: match by position (index) in the old list
+  // If a name at position i changed, rename all readings with the old name
+  const readings = getReadings();
+  const oldWatches = watchesBeforeEdit;
+  for (let i = 0; i < oldWatches.length; i++) {
+    const oldName = oldWatches[i];
+    const newName = newWatches[i];
+    if (newName && oldName && newName !== oldName) {
+      // Rename all readings from oldName to newName
+      readings.forEach(r => { if (r.watch === oldName) r.watch = newName; });
+    }
+  }
+  saveReadings(readings);
+
+  saveWatches(newWatches);
   selectedWatch = null;
+  activeFilter = null;
   document.getElementById('setupScreen').classList.remove('active');
   showMainApp();
 }
@@ -569,8 +408,10 @@ function showMainApp() {
 }
 
 function renderGrid() {
-  document.getElementById('watchGrid').innerHTML = vault.watches.map((name, i) => {
-    const c = vault.readings.filter(r => r.watch === name).length;
+  const watches = getWatches();
+  const readings = getReadings();
+  document.getElementById('watchGrid').innerHTML = watches.map((name, i) => {
+    const c = readings.filter(r => r.watch === name).length;
     const s = selectedWatch === name ? ' selected' : '';
     return '<div class="watch-tile'+s+'" onclick="selWatch('+i+')">' +
       '<div class="watch-name">'+escH(name)+'</div>' +
@@ -579,7 +420,7 @@ function renderGrid() {
 }
 
 function selWatch(i) {
-  const n = vault.watches[i];
+  const n = getWatches()[i];
   selectedWatch = selectedWatch === n ? null : n;
   renderGrid(); updateBtn();
 }
@@ -590,14 +431,15 @@ function updateBtn() {
   b.textContent = selectedWatch ? 'Record Reading' : 'Select a watch first';
 }
 
-async function recordReading() {
+function recordReading() {
   if (!selectedWatch) return;
   const r = document.getElementById('rateInput').value;
   const a = document.getElementById('ampInput').value;
   const b = document.getElementById('beInput').value;
   if (r==='' && a==='' && b==='') { showToast('Enter at least one measurement'); return; }
 
-  vault.readings.push({
+  const readings = getReadings();
+  readings.push({
     id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
     watch: selectedWatch,
     rate: r!=='' ? parseFloat(r) : null,
@@ -605,7 +447,7 @@ async function recordReading() {
     beatError: b!=='' ? parseFloat(b) : null,
     datetime: new Date().toISOString()
   });
-  await saveVault(vault);
+  saveReadings(readings);
   document.getElementById('rateInput').value = '';
   document.getElementById('ampInput').value = '';
   document.getElementById('beInput').value = '';
@@ -618,7 +460,7 @@ async function recordReading() {
 // =========================================================
 function renderLog() {
   const ctr = document.getElementById('logTableContainer');
-  let rd = [...vault.readings];
+  let rd = [...getReadings()];
   const fEl = document.getElementById('logFilter'), fLbl = document.getElementById('filterLabel');
 
   if (activeFilter) { rd = rd.filter(r => r.watch === activeFilter); fEl.style.display='flex'; fLbl.textContent=activeFilter; }
@@ -650,10 +492,10 @@ function clearFilter() { activeFilter=null; renderLog(); }
 // DELETE
 // =========================================================
 function promptDel(id) { pendingDeleteId=id; document.getElementById('deleteModal').classList.add('show'); }
-async function confirmDelete() {
+function confirmDelete() {
   if(!pendingDeleteId)return;
-  vault.readings=vault.readings.filter(r=>r.id!==pendingDeleteId);
-  await saveVault(vault); pendingDeleteId=null;
+  const readings = getReadings().filter(r=>r.id!==pendingDeleteId);
+  saveReadings(readings); pendingDeleteId=null;
   document.getElementById('deleteModal').classList.remove('show');
   renderGrid(); renderLog(); showToast('Deleted');
 }
@@ -663,8 +505,9 @@ function cancelDelete() { pendingDeleteId=null; document.getElementById('deleteM
 // EXPORT CSV
 // =========================================================
 function exportCSV() {
-  if(vault.readings.length===0){showToast('No data');return;}
-  const s=[...vault.readings].sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
+  const readings = getReadings();
+  if(readings.length===0){showToast('No data');return;}
+  const s=[...readings].sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
   let csv='watch,rate_spd,amplitude_deg,beat_error_ms,datetime\n';
   s.forEach(r=>{csv+='"'+r.watch+'",'+(r.rate!==null?r.rate:'')+','+(r.amplitude!==null?r.amplitude:'')+','+(r.beatError!==null?r.beatError:'')+','+r.datetime+'\n';});
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='timegrapher_log.csv'; a.click();
@@ -686,7 +529,8 @@ function handleImportFile(ev) {
     });
     if(parsed.length===0){showToast('No valid entries');ev.target.value='';return;}
     pendingImportData=parsed;
-    const nw=[...new Set(parsed.map(r=>r.watch))].filter(w=>!vault.watches.includes(w));
+    const watches=getWatches();
+    const nw=[...new Set(parsed.map(r=>r.watch))].filter(w=>!watches.includes(w));
     let msg='Found '+parsed.length+' readings.';
     if(err>0)msg+=' ('+err+' rows skipped.)';
     msg+=' Will merge with existing data.';
@@ -697,11 +541,14 @@ function handleImportFile(ev) {
   reader.readAsText(f);
 }
 
-async function confirmImport() {
+function confirmImport() {
   if(!pendingImportData)return;
-  pendingImportData.forEach(r=>vault.readings.push(r));
-  [...new Set(pendingImportData.map(r=>r.watch))].filter(w=>!vault.watches.includes(w)).forEach(n=>vault.watches.push(n));
-  await saveVault(vault);
+  const readings=getReadings();
+  pendingImportData.forEach(r=>readings.push(r));
+  saveReadings(readings);
+  const watches=getWatches();
+  [...new Set(pendingImportData.map(r=>r.watch))].filter(w=>!watches.includes(w)).forEach(n=>watches.push(n));
+  saveWatches(watches);
   const c=pendingImportData.length; pendingImportData=null;
   document.getElementById('importModal').classList.remove('show');
   document.getElementById('csvFileInput').value='';
@@ -718,15 +565,15 @@ function escH(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/
 function esc(s){return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
-document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'){
-    if(document.activeElement.id==='pinUnlock')unlockApp();
-    if(document.activeElement.id==='pinConfirm')createPin();
-  }
-});
-
+// =========================================================
 // INIT
-initLockScreen();
+// =========================================================
+const watches = getWatches();
+if (watches.length === 0) {
+  openSetup(true);
+} else {
+  showMainApp();
+}
 </script>
 </body>
 </html>
